@@ -9,7 +9,7 @@ import { queryKnowledgeBase } from './services/claudeService'
 import styles from './App.module.css'
 
 export default function App() {
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('scanswer_api_key') ?? '')
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('scanswer_gemini_key') ?? '')
   const [documents, setDocuments] = useState<KnowledgeDocument[]>([])
   const [result, setResult] = useState<AnswerResult | null>(null)
   const [history, setHistory] = useState<AnswerResult[]>([])
@@ -18,8 +18,8 @@ export default function App() {
 
   function handleApiKeyChange(key: string) {
     setApiKey(key)
-    if (key) localStorage.setItem('scanswer_api_key', key)
-    else localStorage.removeItem('scanswer_api_key')
+    if (key) localStorage.setItem('scanswer_gemini_key', key)
+    else localStorage.removeItem('scanswer_gemini_key')
   }
 
   function addDocument(doc: KnowledgeDocument) {

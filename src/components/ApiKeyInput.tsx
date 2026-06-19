@@ -10,7 +10,7 @@ export default function ApiKeyInput({ apiKey, onChange }: Props) {
   const [visible, setVisible] = useState(false)
   const [editing, setEditing] = useState(!apiKey)
 
-  const masked = apiKey ? `sk-ant-••••••••${apiKey.slice(-4)}` : ''
+  const masked = apiKey ? `AIza••••••••${apiKey.slice(-4)}` : ''
 
   if (!editing && apiKey) {
     return (
@@ -30,7 +30,7 @@ export default function ApiKeyInput({ apiKey, onChange }: Props) {
       <input
         className={styles.input}
         type={visible ? 'text' : 'password'}
-        placeholder="Paste your Anthropic API key (sk-ant-...)"
+        placeholder="Paste your Google Gemini API key (AIza...)"
         value={apiKey}
         onChange={(e) => onChange(e.target.value)}
         autoComplete="off"
