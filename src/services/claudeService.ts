@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import { GoogleGenAI } from '@google/genai'
 
 const SYSTEM_PROMPT = `You are a precise answer extraction assistant. Your job is to read the provided knowledge base and answer questions from it.
 
@@ -15,11 +15,7 @@ export async function queryKnowledgeBase(
   imageBase64?: string,
   imageMimeType?: string,
 ): Promise<string> {
-  const genAI = new GoogleGenerativeAI(apiKey)
-  const model = genAI.getGenerativeModel({
-    model: 'gemini-1.5-flash-8b',
-    systemInstruction: SYSTEM_PROMPT,
-  })
+  const ai = new GoogleGenAI({ apiKey })
 
   const knowledgeSection =
     knowledgeContent.trim().length > 0
@@ -39,6 +35,14 @@ export async function queryKnowledgeBase(
     parts.push({ text: `${knowledgeSection}\n\nQuestion: ${question}` })
   }
 
-  const result = await model.generateContent(parts)
-  return result.response.text().trim()
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.0-flash-lite',
+    config: {
+      systemInstruction: SYSTEM_PROMPT,
+      maxOutputTokens: 150,
+    },
+    contents: [{ role: 'user', parts }],
+  })
+
+  return (response.text ?? '').trim()
 }
