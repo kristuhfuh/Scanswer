@@ -15,12 +15,12 @@ export default function QuestionPanel({ onSubmit, loading, hasDocuments, hasApiK
   const [question, setQuestion] = useState('')
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
-  const imgInputRef = useRef<HTMLInputElement>(null)
+  const galleryInputRef = useRef<HTMLInputElement>(null)
+  const cameraInputRef = useRef<HTMLInputElement>(null)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (loading) return
-
     if (mode === 'image' && imageFile) {
       const b64 = await imageFileToBase64(imageFile)
       onSubmit('', b64, imageFile.type)
@@ -33,15 +33,15 @@ export default function QuestionPanel({ onSubmit, loading, hasDocuments, hasApiK
     const file = e.target.files?.[0]
     if (!file) return
     setImageFile(file)
-    const url = URL.createObjectURL(file)
-    setImagePreview(url)
+    setImagePreview(URL.createObjectURL(file))
   }
 
   function clearImage() {
     setImageFile(null)
     if (imagePreview) URL.revokeObjectURL(imagePreview)
     setImagePreview(null)
-    if (imgInputRef.current) imgInputRef.current.value = ''
+    if (galleryInputRef.current) galleryInputRef.current.value = ''
+    if (cameraInputRef.current) cameraInputRef.current.value = ''
   }
 
   const canSubmit =
@@ -69,9 +69,8 @@ export default function QuestionPanel({ onSubmit, loading, hasDocuments, hasApiK
           type="button"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-            <circle cx="8.5" cy="8.5" r="1.5"/>
-            <polyline points="21 15 16 10 5 21"/>
+            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+            <circle cx="12" cy="13" r="4"/>
           </svg>
           Scan Image
         </button>
@@ -102,22 +101,50 @@ export default function QuestionPanel({ onSubmit, loading, hasDocuments, hasApiK
                 </button>
               </div>
             ) : (
-              <button
-                type="button"
-                className={styles.dropZone}
-                onClick={() => imgInputRef.current?.click()}
-              >
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" opacity="0.4">
-                  <rect x="3" y="3" width="18" height="18" rx="2"/>
-                  <circle cx="8.5" cy="8.5" r="1.5"/>
-                  <polyline points="21 15 16 10 5 21"/>
-                </svg>
-                <span>Click to upload a photo of the question</span>
-                <span className={styles.supportedFormats}>JPG, PNG, WEBP, GIF</span>
-              </button>
+              <div className={styles.captureOptions}>
+                {/* Camera — opens rear camera directly on mobile */}
+                <button
+                  type="button"
+                  className={styles.captureBtn}
+                  onClick={() => cameraInputRef.current?.click()}
+                >
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                    <circle cx="12" cy="13" r="4"/>
+                  </svg>
+                  <span className={styles.captureBtnLabel}>Use Camera</span>
+                  <span className={styles.captureBtnSub}>Point at your screen</span>
+                </button>
+
+                {/* Gallery / file upload */}
+                <button
+                  type="button"
+                  className={`${styles.captureBtn} ${styles.captureBtnSecondary}`}
+                  onClick={() => galleryInputRef.current?.click()}
+                >
+                  <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <circle cx="8.5" cy="8.5" r="1.5"/>
+                    <polyline points="21 15 16 10 5 21"/>
+                  </svg>
+                  <span className={styles.captureBtnLabel}>Upload Image</span>
+                  <span className={styles.captureBtnSub}>JPG, PNG, WEBP</span>
+                </button>
+              </div>
             )}
+
+            {/* Camera input — capture="environment" opens rear camera on mobile */}
             <input
-              ref={imgInputRef}
+              ref={cameraInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              capture="environment"
+              style={{ display: 'none' }}
+              onChange={handleImageSelect}
+            />
+            {/* Gallery input — no capture, shows file picker / gallery */}
+            <input
+              ref={galleryInputRef}
               type="file"
               accept="image/jpeg,image/png,image/webp,image/gif"
               style={{ display: 'none' }}
