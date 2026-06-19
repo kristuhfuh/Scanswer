@@ -4,22 +4,41 @@ import KnowledgeRepository from './components/KnowledgeRepository'
 import QuestionPanel from './components/QuestionPanel'
 import AnswerDisplay from './components/AnswerDisplay'
 import AnswerHistory from './components/AnswerHistory'
-import ApiKeyInput from './components/ApiKeyInput'
+import PasswordGate from './components/PasswordGate'
 import { queryKnowledgeBase } from './services/claudeService'
 import styles from './App.module.css'
 
 export default function App() {
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('scanswer_api_key') ?? '')
+  const [password, setPassword] = useState(() => sessionStorage.getItem('scanswer_pw') ?? '')
+  const [pwError, setPwError] = useState<string | null>(null)
+  const [pwLoading, setPwLoading] = useState(false)
+
   const [documents, setDocuments] = useState<KnowledgeDocument[]>([])
   const [result, setResult] = useState<AnswerResult | null>(null)
   const [history, setHistory] = useState<AnswerResult[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  function handleApiKeyChange(key: string) {
-    setApiKey(key)
-    if (key) localStorage.setItem('scanswer_api_key', key)
-    else localStorage.removeItem('scanswer_api_key')
+  async function handleUnlock(pw: string) {
+    setPwLoading(true)
+    setPwError(null)
+    try {
+      const res = await fetch('/api/answer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pw, question: 'ping', knowledgeContent: '' }),
+      })
+      if (res.status === 401) {
+        setPwError('Incorrect password. Try again.')
+      } else {
+        sessionStorage.setItem('scanswer_pw', pw)
+        setPassword(pw)
+      }
+    } catch {
+      setPwError('Could not reach the server. Try again.')
+    } finally {
+      setPwLoading(false)
+    }
   }
 
   function addDocument(doc: KnowledgeDocument) {
@@ -32,20 +51,12 @@ export default function App() {
 
   const handleQuestion = useCallback(
     async (question: string, imageBase64?: string, imageMimeType?: string) => {
-      if (!apiKey) return
       setLoading(true)
       setError(null)
       setResult(null)
-
       try {
         const knowledgeContent = documents.map((d) => `[${d.name}]\n${d.content}`).join('\n\n---\n\n')
-        const answer = await queryKnowledgeBase(
-          apiKey,
-          question,
-          knowledgeContent,
-          imageBase64,
-          imageMimeType,
-        )
+        const answer = await queryKnowledgeBase(password, question, knowledgeContent, imageBase64, imageMimeType)
         const entry: AnswerResult = {
           answer,
           questionText: question,
@@ -56,13 +67,21 @@ export default function App() {
         setHistory((prev) => [...prev, entry])
       } catch (err) {
         const msg = err instanceof Error ? err.message : 'Unknown error'
-        setError(msg.includes('401') ? 'Invalid API key. Check your Anthropic API key.' : msg)
+        if (msg.toLowerCase().includes('incorrect password')) {
+          sessionStorage.removeItem('scanswer_pw')
+          setPassword('')
+        }
+        setError(msg)
       } finally {
         setLoading(false)
       }
     },
-    [apiKey, documents],
+    [password, documents],
   )
+
+  if (!password) {
+    return <PasswordGate onUnlock={handleUnlock} error={pwError} loading={pwLoading} />
+  }
 
   return (
     <div className={styles.layout}>
@@ -84,9 +103,13 @@ export default function App() {
           <span className={styles.brandName}>Scanswer</span>
           <span className={styles.tagline}>AI-powered answer scanner</span>
         </div>
-        <div className={styles.apiKeyWrap}>
-          <ApiKeyInput apiKey={apiKey} onChange={handleApiKeyChange} />
-        </div>
+        <button
+          className={styles.lockBtn}
+          onClick={() => { sessionStorage.removeItem('scanswer_pw'); setPassword('') }}
+          title="Lock / sign out"
+        >
+          🔒 Lock
+        </button>
       </header>
 
       <div className={styles.body}>
@@ -95,7 +118,6 @@ export default function App() {
           onAdd={addDocument}
           onRemove={removeDocument}
         />
-
         <main className={styles.main}>
           <div className={styles.section}>
             <h3 className={styles.sectionLabel}>Question</h3>
@@ -103,15 +125,13 @@ export default function App() {
               onSubmit={handleQuestion}
               loading={loading}
               hasDocuments={documents.length > 0}
-              hasApiKey={!!apiKey}
+              hasApiKey={true}
             />
           </div>
-
           <div className={styles.section}>
             <h3 className={styles.sectionLabel}>Answer</h3>
             <AnswerDisplay result={result} error={error} loading={loading} />
           </div>
-
           <AnswerHistory history={history} onClear={() => setHistory([])} />
         </main>
       </div>

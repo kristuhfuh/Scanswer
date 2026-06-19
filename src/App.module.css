@@ -40,10 +40,22 @@
   .tagline { display: block; }
 }
 
-.apiKeyWrap {
-  flex: 1;
-  max-width: 480px;
+.lockBtn {
   margin-left: auto;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.8);
+  font-size: 13px;
+  padding: 6px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+
+.lockBtn:hover {
+  background: rgba(255,255,255,0.2);
+  color: #fff;
 }
 
 .body {
