@@ -15,7 +15,7 @@ export default function AnswerDisplay({ result, error, loading }: Props) {
   if (loading) {
     return (
       <div className={`${styles.card} ${styles.loading}`}>
-        <div className={styles.pulse} />
+        <div className={styles.orb} />
         <p className={styles.loadingText}>Scanning knowledge base...</p>
       </div>
     )

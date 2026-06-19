@@ -6,13 +6,27 @@
 }
 
 .header {
-  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 60%, var(--primary-light) 100%);
-  padding: 12px 24px;
+  background: rgba(7, 11, 20, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  padding: 0 24px;
+  height: 58px;
   display: flex;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
   flex-shrink: 0;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  position: relative;
+}
+
+.header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(59,130,246,0.5) 30%, rgba(45,212,191,0.5) 70%, transparent 100%);
 }
 
 .brand {
@@ -23,16 +37,21 @@
 }
 
 .brandName {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 800;
-  color: #fff;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  background: linear-gradient(135deg, #f1f5f9 30%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .tagline {
   font-size: 11px;
-  color: rgba(255,255,255,0.5);
+  color: var(--text-dim);
   font-weight: 400;
+  border-left: 1px solid var(--border);
+  padding-left: 12px;
   display: none;
 }
 
@@ -42,20 +61,22 @@
 
 .lockBtn {
   margin-left: auto;
-  background: rgba(255,255,255,0.12);
-  border: 1px solid rgba(255,255,255,0.2);
-  color: rgba(255,255,255,0.8);
-  font-size: 13px;
-  padding: 6px 14px;
-  border-radius: var(--radius-sm);
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-muted);
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: var(--radius-xs);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s;
   flex-shrink: 0;
+  letter-spacing: 0.01em;
 }
 
 .lockBtn:hover {
-  background: rgba(255,255,255,0.2);
-  color: #fff;
+  background: rgba(248,113,113,0.1);
+  border-color: rgba(248,113,113,0.3);
+  color: #f87171;
 }
 
 .body {
@@ -67,11 +88,11 @@
 .main {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 24px 32px;
+  padding: 24px 28px 40px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  max-width: 700px;
+  gap: 18px;
+  max-width: 780px;
   width: 100%;
   margin: 0 auto;
 }
@@ -83,9 +104,9 @@
 }
 
 .sectionLabel {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
 }

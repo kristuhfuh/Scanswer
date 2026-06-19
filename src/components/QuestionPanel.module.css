@@ -1,5 +1,7 @@
 .panel {
-  background: var(--surface);
+  background: rgba(13,20,36,0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border-radius: var(--radius);
   border: 1px solid var(--border);
   box-shadow: var(--shadow);
@@ -9,7 +11,7 @@
 .modeSwitch {
   display: flex;
   border-bottom: 1px solid var(--border);
-  background: var(--surface-2);
+  background: rgba(255,255,255,0.02);
 }
 
 .modeBtn {
@@ -17,32 +19,34 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 11px 16px;
+  gap: 7px;
+  padding: 12px 16px;
   font-size: 13px;
   font-weight: 500;
-  color: var(--text-muted);
+  color: var(--text-dim);
   background: transparent;
   border: none;
   border-bottom: 2px solid transparent;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.18s;
   margin-bottom: -1px;
+  letter-spacing: 0.01em;
 }
 
 .modeBtn:hover {
-  color: var(--primary);
-  background: rgba(26,58,92,0.04);
+  color: var(--text-muted);
+  background: rgba(255,255,255,0.03);
 }
 
 .modeBtn.active {
-  color: var(--primary);
+  color: var(--primary-light);
   border-bottom-color: var(--primary);
   font-weight: 600;
+  background: rgba(59,130,246,0.05);
 }
 
 .form {
-  padding: 16px;
+  padding: 18px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -54,32 +58,34 @@
 
 .textarea {
   width: 100%;
-  border: 1.5px solid var(--border);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
-  padding: 12px 14px;
+  padding: 13px 14px;
   font-size: 14px;
   color: var(--text);
-  background: var(--surface);
   resize: vertical;
   line-height: 1.6;
-  transition: border-color 0.15s;
-}
-
-.textarea:focus {
-  border-color: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(37, 99, 168, 0.1);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
 .textarea::placeholder {
-  color: var(--text-light);
+  color: var(--text-dim);
+  font-size: 13px;
+}
+
+.textarea:focus {
+  border-color: var(--border-bright);
+  box-shadow: 0 0 0 3px var(--primary-glow), 0 0 24px rgba(59,130,246,0.06);
 }
 
 .hint {
   display: block;
   text-align: right;
-  font-size: 11px;
-  color: var(--text-light);
-  margin-top: 4px;
+  font-size: 10px;
+  color: var(--text-dim);
+  margin-top: 5px;
+  letter-spacing: 0.02em;
 }
 
 .imageZone {
@@ -92,26 +98,27 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  border: 2px dashed var(--border);
+  gap: 10px;
+  border: 1.5px dashed rgba(255,255,255,0.1);
   border-radius: var(--radius);
-  padding: 32px 16px;
-  background: var(--surface-2);
+  padding: 36px 16px;
+  background: rgba(255,255,255,0.02);
   cursor: pointer;
-  transition: all 0.15s;
-  color: var(--text-muted);
+  transition: all 0.2s;
+  color: var(--text-dim);
   font-size: 13px;
 }
 
 .dropZone:hover {
-  border-color: var(--primary-light);
-  background: rgba(37, 99, 168, 0.04);
-  color: var(--primary);
+  border-color: rgba(59,130,246,0.4);
+  background: rgba(59,130,246,0.04);
+  color: var(--primary-light);
 }
 
 .supportedFormats {
   font-size: 11px;
-  color: var(--text-light);
+  color: var(--text-dim);
+  opacity: 0.7;
 }
 
 .previewWrap {
@@ -126,14 +133,15 @@
   max-height: 220px;
   object-fit: contain;
   display: block;
-  background: #f8f8f8;
+  background: rgba(255,255,255,0.03);
 }
 
 .clearImg {
   position: absolute;
   top: 8px;
   right: 8px;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
   color: #fff;
   font-size: 12px;
   padding: 4px 10px;
@@ -144,16 +152,16 @@
 }
 
 .clearImg:hover {
-  background: rgba(0,0,0,0.8);
+  background: rgba(248,113,113,0.7);
 }
 
 .warn {
   font-size: 12px;
   color: var(--warning);
-  background: #fffbeb;
-  border: 1px solid #fde68a;
+  background: var(--warning-bg);
+  border: 1px solid rgba(251,191,36,0.2);
   border-radius: var(--radius-sm);
-  padding: 8px 12px;
+  padding: 9px 13px;
 }
 
 .submitBtn {
@@ -162,33 +170,52 @@
   justify-content: center;
   gap: 8px;
   width: 100%;
-  padding: 12px;
-  background: var(--accent);
+  padding: 13px;
+  background: var(--gradient);
   color: #fff;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 700;
   border-radius: var(--radius-sm);
-  letter-spacing: 0.02em;
-  transition: all 0.15s;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.submitBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 55%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.5s;
+}
+
+.submitBtn:hover:not(:disabled)::before {
+  left: 160%;
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: var(--accent-hover);
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0,200,150,0.3);
+  box-shadow: 0 8px 28px rgba(59,130,246,0.4);
 }
 
 .submitBtn:disabled {
-  opacity: 0.5;
+  opacity: 0.35;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
 }
 
 .spinner {
   display: inline-block;
   width: 16px;
   height: 16px;
-  border: 2.5px solid rgba(255,255,255,0.3);
+  border: 2px solid rgba(255,255,255,0.25);
   border-top-color: #fff;
   border-radius: 50%;
   animation: spin 0.7s linear infinite;

@@ -95,8 +95,8 @@ export default function App() {
             <line x1="14" y1="11" x2="14" y2="17" stroke="#00c896" strokeWidth="2" strokeLinecap="round" />
             <defs>
               <linearGradient id="grad" x1="0" y1="0" x2="32" y2="32">
-                <stop offset="0%" stopColor="#1a3a5c" />
-                <stop offset="100%" stopColor="#2563a8" />
+                <stop offset="0%" stopColor="#1e40af" />
+                <stop offset="100%" stopColor="#2dd4bf" />
               </linearGradient>
             </defs>
           </svg>
