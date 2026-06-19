@@ -12,7 +12,8 @@
     "@anthropic-ai/sdk": "^0.36.3",
     "pdfjs-dist": "^4.9.155",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@types/react": "^19.1.5",

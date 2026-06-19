@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import type { KnowledgeDocument } from '../types'
-import { parsePdf, parseTxt } from '../services/documentParser'
+import { parsePdf, parseTxt, parseExcel } from '../services/documentParser'
 import styles from './KnowledgeRepository.module.css'
 
 interface Props {
@@ -26,9 +26,13 @@ export default function KnowledgeRepository({ documents, onAdd, onRemove }: Prop
       for (const file of Array.from(files)) {
         let content = ''
         let type: KnowledgeDocument['type'] = 'txt'
-        if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+        const name = file.name.toLowerCase()
+        if (file.type === 'application/pdf' || name.endsWith('.pdf')) {
           content = await parsePdf(file)
           type = 'pdf'
+        } else if (name.endsWith('.xlsx') || name.endsWith('.xls') || name.endsWith('.csv')) {
+          content = await parseExcel(file)
+          type = 'txt'
         } else {
           content = await parseTxt(file)
           type = 'txt'
@@ -96,12 +100,12 @@ export default function KnowledgeRepository({ documents, onAdd, onRemove }: Prop
               <line x1="12" y1="3" x2="12" y2="15"/>
             </svg>
           )}
-          Upload PDF / TXT
+          Upload PDF / Excel / TXT
         </button>
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pdf,.txt,.text"
+          accept=".pdf,.txt,.text,.xlsx,.xls,.csv"
           multiple
           style={{ display: 'none' }}
           onChange={handleFileUpload}
@@ -164,7 +168,7 @@ export default function KnowledgeRepository({ documents, onAdd, onRemove }: Prop
           documents.map((doc) => (
             <div key={doc.id} className={styles.docItem}>
               <span className={styles.docIcon}>
-                {doc.type === 'pdf' ? '📄' : doc.type === 'text' ? '📝' : '📃'}
+                {doc.type === 'pdf' ? '📄' : doc.type === 'text' ? '📝' : doc.name.match(/\.(xlsx?|csv)$/i) ? '📊' : '📃'}
               </span>
               <div className={styles.docInfo}>
                 <span className={styles.docName} title={doc.name}>{doc.name}</span>
