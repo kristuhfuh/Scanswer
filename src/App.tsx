@@ -4,15 +4,23 @@ import KnowledgeRepository from './components/KnowledgeRepository'
 import QuestionPanel from './components/QuestionPanel'
 import AnswerDisplay from './components/AnswerDisplay'
 import AnswerHistory from './components/AnswerHistory'
+import ApiKeyInput from './components/ApiKeyInput'
 import { queryKnowledgeBase } from './services/claudeService'
 import styles from './App.module.css'
 
 export default function App() {
+  const [apiKey, setApiKey] = useState(() => localStorage.getItem('scanswer_api_key') ?? '')
   const [documents, setDocuments] = useState<KnowledgeDocument[]>([])
   const [result, setResult] = useState<AnswerResult | null>(null)
   const [history, setHistory] = useState<AnswerResult[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  function handleApiKeyChange(key: string) {
+    setApiKey(key)
+    if (key) localStorage.setItem('scanswer_api_key', key)
+    else localStorage.removeItem('scanswer_api_key')
+  }
 
   function addDocument(doc: KnowledgeDocument) {
     setDocuments((prev) => [...prev, doc])
@@ -24,12 +32,13 @@ export default function App() {
 
   const handleQuestion = useCallback(
     async (question: string, imageBase64?: string, imageMimeType?: string) => {
+      if (!apiKey) return
       setLoading(true)
       setError(null)
       setResult(null)
       try {
         const knowledgeContent = documents.map((d) => `[${d.name}]\n${d.content}`).join('\n\n---\n\n')
-        const answer = await queryKnowledgeBase(question, knowledgeContent, imageBase64, imageMimeType)
+        const answer = await queryKnowledgeBase(apiKey, question, knowledgeContent, imageBase64, imageMimeType)
         const entry: AnswerResult = {
           answer,
           questionText: question,
@@ -39,12 +48,13 @@ export default function App() {
         setResult(entry)
         setHistory((prev) => [...prev, entry])
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Unknown error')
+        const msg = err instanceof Error ? err.message : 'Unknown error'
+        setError(msg.includes('401') ? 'Invalid API key. Check your Anthropic API key.' : msg)
       } finally {
         setLoading(false)
       }
     },
-    [documents],
+    [apiKey, documents],
   )
 
   return (
@@ -67,6 +77,9 @@ export default function App() {
           <span className={styles.brandName}>Scanswer</span>
           <span className={styles.tagline}>AI-powered answer scanner</span>
         </div>
+        <div className={styles.apiKeyWrap}>
+          <ApiKeyInput apiKey={apiKey} onChange={handleApiKeyChange} />
+        </div>
       </header>
 
       <div className={styles.body}>
@@ -82,7 +95,7 @@ export default function App() {
               onSubmit={handleQuestion}
               loading={loading}
               hasDocuments={documents.length > 0}
-              hasApiKey={true}
+              hasApiKey={!!apiKey}
             />
           </div>
           <div className={styles.section}>
