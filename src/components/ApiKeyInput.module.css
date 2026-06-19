@@ -1,0 +1,74 @@
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  flex: 1;
+  min-width: 0;
+}
+
+.saved {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(0,200,150,0.15);
+  border: 1px solid rgba(0,200,150,0.3);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+}
+
+.keyIcon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 13px;
+  min-width: 0;
+}
+
+.input::placeholder {
+  color: rgba(255,255,255,0.45);
+}
+
+.masked {
+  color: rgba(255,255,255,0.85);
+  font-size: 13px;
+  font-family: monospace;
+}
+
+.toggleBtn, .editBtn, .saveBtn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  color: rgba(255,255,255,0.7);
+  padding: 2px 4px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.toggleBtn:hover, .editBtn:hover {
+  color: #fff;
+}
+
+.saveBtn {
+  background: var(--accent);
+  color: #fff;
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.saveBtn:hover {
+  background: var(--accent-hover);
+}
