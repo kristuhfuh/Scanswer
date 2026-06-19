@@ -21,17 +21,12 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  const { password, question, knowledgeContent, imageBase64, imageMimeType } = req.body ?? {}
-
-  const appPassword = process.env.APP_PASSWORD
-  if (!appPassword || password !== appPassword) {
-    return res.status(401).json({ error: 'Incorrect password' })
-  }
-
   const apiKey = process.env.ANTHROPIC_API_KEY
   if (!apiKey) {
     return res.status(500).json({ error: 'Server is not configured (missing API key)' })
   }
+
+  const { question, knowledgeContent, imageBase64, imageMimeType } = req.body ?? {}
 
   try {
     const client = new Anthropic({ apiKey })

@@ -1,5 +1,4 @@
 export async function queryKnowledgeBase(
-  password: string,
   question: string,
   knowledgeContent: string,
   imageBase64?: string,
@@ -8,7 +7,7 @@ export async function queryKnowledgeBase(
   const res = await fetch('/api/answer', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ password, question, knowledgeContent, imageBase64, imageMimeType }),
+    body: JSON.stringify({ question, knowledgeContent, imageBase64, imageMimeType }),
   })
 
   const data = await res.json() as { answer?: string; error?: string }
