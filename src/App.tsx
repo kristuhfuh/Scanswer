@@ -30,9 +30,11 @@ export default function App() {
       })
       if (res.status === 401) {
         setPwError('Incorrect password. Try again.')
-      } else {
+      } else if (res.ok) {
         sessionStorage.setItem('scanswer_pw', pw)
         setPassword(pw)
+      } else {
+        setPwError('Server error. Make sure environment variables are set on Vercel.')
       }
     } catch {
       setPwError('Could not reach the server. Try again.')
