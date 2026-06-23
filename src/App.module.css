@@ -59,6 +59,43 @@
   .tagline { display: block; }
 }
 
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 16px;
+  background: rgba(255,255,255,0.04);
+  border-radius: var(--radius-sm);
+  padding: 3px;
+  border: 1px solid var(--border);
+}
+
+.tab {
+  padding: 5px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+
+.tab:hover {
+  color: var(--text-muted);
+}
+
+.tabActive {
+  background: var(--primary);
+  color: #fff;
+}
+
+.tabActive:hover {
+  color: #fff;
+}
+
 .apiKeyWrap {
   flex: 1;
   max-width: 420px;

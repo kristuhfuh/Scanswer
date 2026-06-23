@@ -36,6 +36,32 @@ export async function parseExcel(file: File): Promise<string> {
   return sheets.join('\n\n')
 }
 
+export async function parseExcelStructured(file: File): Promise<import('../types').ExcelSheet[]> {
+  const XLSX = await import('xlsx')
+  const arrayBuffer = await file.arrayBuffer()
+  const workbook = XLSX.read(arrayBuffer, { type: 'array' })
+  const result: import('../types').ExcelSheet[] = []
+
+  for (const sheetName of workbook.SheetNames) {
+    const sheet = workbook.Sheets[sheetName]
+    const raw = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '' }) as unknown[][]
+    if (raw.length < 2) continue
+
+    const headers = (raw[0] as unknown[]).map(String).map(s => s.trim()).filter(Boolean)
+    if (headers.length === 0) continue
+
+    const rows = raw.slice(1)
+      .map(row => (row as unknown[]).map(String))
+      .filter(row => row.some(cell => cell.trim()))
+
+    if (rows.length > 0) {
+      result.push({ name: sheetName, headers, rows })
+    }
+  }
+
+  return result
+}
+
 export async function parseTxt(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()

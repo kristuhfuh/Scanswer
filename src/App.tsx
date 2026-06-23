@@ -5,10 +5,14 @@ import QuestionPanel from './components/QuestionPanel'
 import AnswerDisplay from './components/AnswerDisplay'
 import AnswerHistory from './components/AnswerHistory'
 import ApiKeyInput from './components/ApiKeyInput'
+import TenantLookup from './components/TenantLookup'
 import { queryKnowledgeBase } from './services/claudeService'
 import styles from './App.module.css'
 
+type AppMode = 'qa' | 'lookup'
+
 export default function App() {
+  const [mode, setMode] = useState<AppMode>('qa')
   const [apiKey, setApiKey] = useState(() => localStorage.getItem('scanswer_gemini_key') ?? '')
   const [documents, setDocuments] = useState<KnowledgeDocument[]>([])
   const [result, setResult] = useState<AnswerResult | null>(null)
@@ -77,33 +81,56 @@ export default function App() {
           <span className={styles.brandName}>Scanswer</span>
           <span className={styles.tagline}>AI-powered answer scanner</span>
         </div>
-        <div className={styles.apiKeyWrap}>
-          <ApiKeyInput apiKey={apiKey} onChange={handleApiKeyChange} />
-        </div>
+        <nav className={styles.tabs}>
+          <button
+            className={`${styles.tab} ${mode === 'qa' ? styles.tabActive : ''}`}
+            onClick={() => setMode('qa')}
+          >
+            AI Q&amp;A
+          </button>
+          <button
+            className={`${styles.tab} ${mode === 'lookup' ? styles.tabActive : ''}`}
+            onClick={() => setMode('lookup')}
+          >
+            Lookup
+          </button>
+        </nav>
+
+        {mode === 'qa' && (
+          <div className={styles.apiKeyWrap}>
+            <ApiKeyInput apiKey={apiKey} onChange={handleApiKeyChange} />
+          </div>
+        )}
       </header>
 
       <div className={styles.body}>
-        <KnowledgeRepository
-          documents={documents}
-          onAdd={addDocument}
-          onRemove={removeDocument}
-        />
-        <main className={styles.main}>
-          <div className={styles.section}>
-            <h3 className={styles.sectionLabel}>Question</h3>
-            <QuestionPanel
-              onSubmit={handleQuestion}
-              loading={loading}
-              hasDocuments={documents.length > 0}
-              hasApiKey={!!apiKey}
+        {mode === 'lookup' ? (
+          <TenantLookup />
+        ) : (
+          <>
+            <KnowledgeRepository
+              documents={documents}
+              onAdd={addDocument}
+              onRemove={removeDocument}
             />
-          </div>
-          <div className={styles.section}>
-            <h3 className={styles.sectionLabel}>Answer</h3>
-            <AnswerDisplay result={result} error={error} loading={loading} />
-          </div>
-          <AnswerHistory history={history} onClear={() => setHistory([])} />
-        </main>
+            <main className={styles.main}>
+              <div className={styles.section}>
+                <h3 className={styles.sectionLabel}>Question</h3>
+                <QuestionPanel
+                  onSubmit={handleQuestion}
+                  loading={loading}
+                  hasDocuments={documents.length > 0}
+                  hasApiKey={!!apiKey}
+                />
+              </div>
+              <div className={styles.section}>
+                <h3 className={styles.sectionLabel}>Answer</h3>
+                <AnswerDisplay result={result} error={error} loading={loading} />
+              </div>
+              <AnswerHistory history={history} onClear={() => setHistory([])} />
+            </main>
+          </>
+        )}
       </div>
     </div>
   )

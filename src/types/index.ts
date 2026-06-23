@@ -6,6 +6,12 @@ export interface KnowledgeDocument {
   addedAt: number
 }
 
+export interface ExcelSheet {
+  name: string
+  headers: string[]
+  rows: string[][]
+}
+
 export type QuestionInputMode = 'text' | 'image'
 
 export interface AnswerResult {
